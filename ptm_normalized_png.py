@@ -53,13 +53,11 @@ def get_peptide_res(_l,_plength,_lines):
 			end[vs[1]] = vs[2]
 		if vs[1] > max:
 			max = vs[1]
-		a = vs[0]
-		while a <= vs[1]:
+		for a in range(vs[0],vs[1]+1):
 			if a in res:
 				res[a] = res[a] + vs[2]
 			else:
 				res[a] = vs[2]
-			a += 1
 
 	return res
 
@@ -102,18 +100,18 @@ def make_ptm_csv(_l,_plength,_title,_protein,_res,_file):
 	a = 1;
 	xs = {'acetyl':[],'S-phosphoryl':[],'T-phosphoryl':[],'Y-phosphoryl':[],'ubiquitinyl':[]}
 	ys = {'acetyl':[],'S-phosphoryl':[],'T-phosphoryl':[],'Y-phosphoryl':[],'ubiquitinyl':[]}
-	while(a <= _plength):
+	min_obs = 5
+	for a in range(1,_plength+1):
 		if a not in _res or _res[a] < 10:
-			a += 1
 			continue
 		b = str(a)
 		if(b in values['acetyl']):
-			if values['acetyl'][b] != 0:
+			if values['acetyl'][b] >= min_obs:
 				xs['acetyl'].append(a)
 				ys['acetyl'].append(values['acetyl'][b]/_res[a])
 
 		if(b in values['phosphoryl']):
-			if values['phosphoryl'][b] != 0:
+			if values['phosphoryl'][b] >= min_obs:
 				if seq[a-1] == 'S':
 					xs['S-phosphoryl'].append(a)
 					ys['S-phosphoryl'].append(values['phosphoryl'][b]/_res[a])
@@ -125,10 +123,9 @@ def make_ptm_csv(_l,_plength,_title,_protein,_res,_file):
 					ys['Y-phosphoryl'].append(values['phosphoryl'][b]/_res[a])
 
 		if(b in values['ubiquitinyl']):
-			if values['ubiquitinyl'][b] != 0:
+			if values['ubiquitinyl'][b] >= min_obs:
 				xs['ubiquitinyl'].append(a)
 				ys['ubiquitinyl'].append(values['ubiquitinyl'][b]/_res[a])
-		a += 1
 
 #	plt.xkcd()
 	mpl.style.use('seaborn-notebook')

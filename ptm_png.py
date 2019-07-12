@@ -21,7 +21,7 @@ def get_protein(_l):
 		return None
 	return values[0]
 
-def make_ptm_csv(_l,_plength,_title,_protein,_file):
+def make_ptm_csv(_l,_plength,_title,_protein,_file,_y):
 	session = requests.session()
 	seq = list(_protein)
 	url = 'http://gpmdb.thegpm.org/1/peptide/pf/acc=%s&pos=1-%i&w=n' % (_l,_plength)
@@ -60,15 +60,16 @@ def make_ptm_csv(_l,_plength,_title,_protein,_file):
 	a = 1;
 	xs = {'acetyl':[],'S-phosphoryl':[],'T-phosphoryl':[],'Y-phosphoryl':[],'ubiquitinyl':[]}
 	ys = {'acetyl':[],'S-phosphoryl':[],'T-phosphoryl':[],'Y-phosphoryl':[],'ubiquitinyl':[]}
-	while(a <= _plength):
+	min_obs = 5
+	for a in range(1,_plength+1):
 		b = str(a)
 		if(b in values['acetyl']):
-			if values['acetyl'][b] != 0:
+			if values['acetyl'][b] >= min_obs:
 				xs['acetyl'].append(a)
 				ys['acetyl'].append(values['acetyl'][b])
 
 		if(b in values['phosphoryl']):
-			if values['phosphoryl'][b] != 0:
+			if values['phosphoryl'][b] >= min_obs:
 				if seq[a-1] == 'S':
 					xs['S-phosphoryl'].append(a)
 					ys['S-phosphoryl'].append(values['phosphoryl'][b])
@@ -80,10 +81,9 @@ def make_ptm_csv(_l,_plength,_title,_protein,_file):
 					ys['Y-phosphoryl'].append(values['phosphoryl'][b])
 
 		if(b in values['ubiquitinyl']):
-			if values['ubiquitinyl'][b] != 0:
+			if values['ubiquitinyl'][b] >= min_obs:
 				xs['ubiquitinyl'].append(a)
 				ys['ubiquitinyl'].append(values['ubiquitinyl'][b])
-		a += 1
 
 #	plt.xkcd()
 	mpl.style.use('seaborn-notebook')
@@ -109,12 +109,17 @@ def make_ptm_csv(_l,_plength,_title,_protein,_file):
 	fig.set_size_inches(10, 5)
 	cl = re.sub('\|','_',_file)
 	plt.gca().get_xaxis().set_major_formatter(matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
+	if _y is not None:
+		print(_y)
+		plt.ylim(1,_y)
+	else:
+		plt.ylim(1,None)
 	fig.savefig('png/%s_ptms.png' % (cl), dpi=100, bbox_inches='tight')
 	plt.show()
 	return 1
 
 if len(sys.argv) < 2:
-		print('ptm_png.py PROTEIN_ACC TITLE (FILENAME)')
+		print('ptm_png.py PROTEIN_ACC TITLE FILENAME (Y-LIMIT)')
 		exit()
 label = sys.argv[1]
 title = ''
@@ -128,9 +133,13 @@ try:
 	filename = sys.argv[3]
 except:
 	filename = sys.argv[1]
-
+y_axis = None
+try:
+	y_axis = int(float(sys.argv[4]))
+except:
+	y_axis = None
 print('Request protein sequence ...')
 protein = get_protein(label)
 print('Create PTM plot ...')
-make_ptm_csv(label,len(protein),title,protein,filename)
+make_ptm_csv(label,len(protein),title,protein,filename,y_axis)
 

@@ -54,13 +54,11 @@ def make_peptide_png(_l,_plength,_lines,_title,_file):
 			end[vs[1]] = vs[2]
 		if vs[1] > max:
 			max = vs[1]
-		a = vs[0]
-		while a <= vs[1]:
+		for a in range(vs[0],vs[1]+1):
 			if a in res:
 				res[a] = res[a] + vs[2]
 			else:
 				res[a] = vs[2]
-			a += 1
 
 	max = _plength
 	max_res = 0
@@ -70,13 +68,12 @@ def make_peptide_png(_l,_plength,_lines,_title,_file):
 	a = 1
 	xs = []
 	ys = []
-	while a <= max:
+	for a in range(1,max+1):
 		xs.append(a)
 		if a in res:
 			ys.append(res[a])
 		else:
 			ys.append(0)
-		a += 1
 
 	mpl.style.use('seaborn-notebook')
 	plt.xlim(0,int(1.02*_plength))
