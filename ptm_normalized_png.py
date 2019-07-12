@@ -63,7 +63,7 @@ def get_peptide_res(_l,_plength,_lines):
 
 	return res
 
-def make_ptm_csv(_l,_plength,_title,_protein,_res):
+def make_ptm_csv(_l,_plength,_title,_protein,_res,_file):
 	session = requests.session()
 	seq = list(_protein)
 	url = 'http://gpmdb.thegpm.org/1/peptide/pf/acc=%s&pos=1-%i&w=n' % (_l,_plength)
@@ -152,14 +152,14 @@ def make_ptm_csv(_l,_plength,_title,_protein,_res):
 	ax.legend(loc='upper left', bbox_to_anchor=(1, 1))
 	fig = plt.gcf()
 	fig.set_size_inches(10, 5)
-	cl = re.sub('\|','_',_l)
+	cl = re.sub('\|','_',_file)
 	plt.gca().get_xaxis().set_major_formatter(matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
 	fig.savefig('png/%s_n_ptms.png' % (cl), dpi=100, bbox_inches='tight')
 	plt.show()
 	return 1
 
 if len(sys.argv) < 2:
-		print('start_stop.py PROTEIN_ACC TITLE')
+		print('ptm_normalized_png.py PROTEIN_ACC TITLE (FILENAME)')
 		exit()
 label = sys.argv[1]
 title = ''
@@ -167,11 +167,17 @@ try:
 	title = sys.argv[2]
 except:
 	title = sys.argv[1]
+filename = sys.argv[1]
+try:
+	filename = sys.argv[3]
+except:
+	filename = sys.argv[1]
+
 print('Request protein sequence ...')
 protein = get_protein(label)
 lines = get_peptides(label)
 rs = get_peptide_res(label,len(protein),lines)
-print('Create PTM CSV ...')
-make_ptm_csv(label,len(protein),title,protein,rs)
+print('Create PTM plot ...')
+make_ptm_csv(label,len(protein),title,protein,rs,filename)
 
 

@@ -34,7 +34,7 @@ def get_protein(_l):
 	return values[0]
 
 
-def make_peptide_png(_l,_plength,_lines,_title):
+def make_peptide_png(_l,_plength,_lines,_title,_file):
 	start = {}
 	end = {}
 	res = {}
@@ -90,7 +90,7 @@ def make_peptide_png(_l,_plength,_lines,_title):
 	plt.title(_title)
 	fig = plt.gcf()
 	fig.set_size_inches(10, 5)
-	cl = re.sub('\|','_',_l)
+	cl = re.sub('\|','_',_file)
 	plt.gca().get_yaxis().set_major_formatter(matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
 	plt.gca().get_xaxis().set_major_formatter(matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
 	fig.savefig('png/%s_peps.png' % (cl), dpi=100, bbox_inches='tight')
@@ -98,7 +98,7 @@ def make_peptide_png(_l,_plength,_lines,_title):
 	return 1
 	
 if len(sys.argv) < 2:
-		print('start_stop.py PROTEIN_ACC TITLE')
+		print('peptides_png.py PROTEIN_ACC TITLE (FILENAME)')
 		exit()
 label = sys.argv[1]
 title = ''
@@ -106,12 +106,17 @@ try:
 	title = sys.argv[2]
 except:
 	title = label
-tfile = 't.csv'
+filename = sys.argv[1]
+try:
+	filename = sys.argv[3]
+except:
+	filename = sys.argv[1]
+
 print('Request protein sequence ...')
 protein = get_protein(label)
 print('Request peptide information ...')
 ls = get_peptides(label)
 print('Create peptide plot ...')
-make_peptide_png(label,len(protein),ls,title)
-print('Info for %s complete.' % (label))
+make_peptide_png(label,len(protein),ls,title,filename)
+
 
