@@ -7,7 +7,7 @@ import matplotlib.pyplot as plt
 import matplotlib.style
 import matplotlib as mpl
 
-def get_peptides(_l,_t):
+def get_peptides(_l):
 	url = 'https://gpmdb.thegpm.org/protein/model/%s&excel=1' % (_l)
 	session = requests.session()
 	try:
@@ -93,11 +93,8 @@ def make_peptide_png(_l,_plength,_lines,_title):
 	cl = re.sub('\|','_',_l)
 	plt.gca().get_yaxis().set_major_formatter(matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
 	plt.gca().get_xaxis().set_major_formatter(matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
-
 	fig.savefig('png/%s_peps.png' % (cl), dpi=100, bbox_inches='tight')
 	plt.show()
-
-
 	return 1
 	
 if len(sys.argv) < 2:
@@ -113,7 +110,7 @@ tfile = 't.csv'
 print('Request protein sequence ...')
 protein = get_protein(label)
 print('Request peptide information ...')
-ls = get_peptides(label,tfile)
+ls = get_peptides(label)
 print('Create peptide plot ...')
 make_peptide_png(label,len(protein),ls,title)
 print('Info for %s complete.' % (label))
