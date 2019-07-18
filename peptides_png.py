@@ -98,7 +98,7 @@ def make_peptide_png(_l,_plength,_lines,_title,_file):
 	ms = 10
 	#load x,y information into a plot
 	plt.plot(xs,ys,color=(0.25,0,.75,.8),marker='',linestyle='solid',linewidth=1)
-	#set up the required grap
+	#set up the required graph
 #	plt.yscale('log')
 	plt.ylabel('observations')
 	plt.xlabel('residue')
