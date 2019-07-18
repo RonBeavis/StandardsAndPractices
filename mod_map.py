@@ -1,5 +1,6 @@
 import xml.sax
 import sys
+import re
 import matplotlib.pyplot as plt
 import matplotlib.style
 import matplotlib as mpl
@@ -10,11 +11,14 @@ class bioMLHandler(xml.sax.ContentHandler):
 		self.isDomain = False
 		self.isAa = False
 		self.mods = {}
+		self.spectra = set()
+		self.current = None
 		self.domSum = 0.0
 			
 	def startElement(self, tag, attrs):
 		self.cTag = tag
 		if tag == 'domain':
+			self.current = int(re.sub('\..+','',attrs['id']))
 			self.isDomain = True
 			self.domSum = 0.0
 		if tag == 'aa':
@@ -23,14 +27,17 @@ class bioMLHandler(xml.sax.ContentHandler):
 	def endElement(self, tag):
 		if tag == 'domain':
 			mod = int(self.domSum + 0.5)
-			if mod in self.mods:
-				self.mods[mod] += 1
-			else:
-				self.mods[mod] = 1
+			if self.current not in self.spectra:
+				if mod in self.mods:
+					self.mods[mod] += 1
+				else:
+					self.mods[mod] = 1
+				self.spectra.add(self.current)
+
 	def get_mod_map(self):
 		return self.mods
 
-def render_map(_map,_title):
+def render_map(_map,_title,_file):
 	xs = []
 	ys = []
 	for x in range(min(_map)-10,max(_map)+10):
@@ -52,11 +59,10 @@ def render_map(_map,_title):
 	plt.title(_title)
 	fig = plt.gcf()
 	fig.set_size_inches(10, 5)
-	cl = _title
 	plt.gca().set_axisbelow(True)
 	plt.gca().get_yaxis().set_major_formatter(matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
 	plt.gca().get_xaxis().set_major_formatter(matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
-#	fig.savefig('png/%s_peps.png' % (cl), dpi=100, bbox_inches='tight')
+	fig.savefig('png/%s.png' % (_file), dpi=100, bbox_inches='tight')
 	plt.show()
 	plt.show()
 
@@ -74,6 +80,6 @@ parser = xml.sax.make_parser()
 parser.setContentHandler(bioMLHandler())
 parser.parse(open(fpath,"r"))
 mod_map = parser.getContentHandler().get_mod_map()
-render_map(mod_map,title)
+render_map(mod_map,title,fpath)
 
 
