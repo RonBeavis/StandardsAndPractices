@@ -1,3 +1,12 @@
+#
+# Copyright © 2019 Ronald C. Beavis
+# Licensed under Apache License, Version 2.0, January 2004
+#
+
+# Creates a histogram of the frequency of PTM observation
+# Information is obtained from GPMDB services and converted into a
+# scatter plot
+
 import sys
 import requests
 import re
@@ -7,6 +16,7 @@ import matplotlib.pyplot as plt
 import matplotlib.style
 import matplotlib as mpl
 
+#obtain the protein sequence for the protein identified by _l
 def get_protein(_l):
 	url = 'http://rest.thegpm.org/1/protein/sequence/acc=%s' % (_l)
 	session = requests.session()
@@ -21,6 +31,7 @@ def get_protein(_l):
 		return None
 	return values[0]
 
+#obtain the frequency of peptide observation for the protein identified by _l
 def get_peptides(_l):
 	url = 'https://gpmdb.thegpm.org/protein/model/%s&excel=1' % (_l)
 	session = requests.session()
@@ -33,6 +44,7 @@ def get_peptides(_l):
 	text = re.sub('\r\n','\n',r.text)
 	return text.splitlines()
 
+#interpret csv data from get_peptides convert it into residue-by-residue frequency
 def get_peptide_res(_l,_plength,_lines):
 	start = {}
 	end = {}
@@ -61,9 +73,11 @@ def get_peptide_res(_l,_plength,_lines):
 
 	return res
 
+# generate a frequency histogram and plot the values
 def make_ptm_csv(_l,_plength,_title,_protein,_res,_file):
 	session = requests.session()
 	seq = list(_protein)
+	#formulate a URL to request information about phosphorylation for the protein identified by _l
 	url = 'http://gpmdb.thegpm.org/1/peptide/pf/acc=%s&pos=1-%i&w=n' % (_l,_plength)
 	values = {'acetyl':None,'phosphoryl':None,'ubiquitinyl':None}
 	try:
@@ -76,6 +90,7 @@ def make_ptm_csv(_l,_plength,_title,_protein,_res,_file):
 	except:
 		return None
 
+	#formulate a URL to request information about acetylation for the protein identified by _l
 	url = 'http://gpmdb.thegpm.org/1/peptide/af/acc=%s&pos=1-%i&w=n' % (_l,_plength)
 	try:
 		r = session.get(url,timeout=20)
@@ -87,6 +102,7 @@ def make_ptm_csv(_l,_plength,_title,_protein,_res,_file):
 	except:
 		return None
 
+	#formulate a URL to request information about ubiquitinylation for the protein identified by _l
 	url = 'http://gpmdb.thegpm.org/1/peptide/uf/acc=%s&pos=1-%i&w=n' % (_l,_plength)
 	try:
 		r = session.get(url,timeout=20)
@@ -98,9 +114,11 @@ def make_ptm_csv(_l,_plength,_title,_protein,_res,_file):
 	except:
 		return None
 	a = 1;
+	#xs and ys contain the x,y arrays for the scatter plots
 	xs = {'acetyl':[],'S-phosphoryl':[],'T-phosphoryl':[],'Y-phosphoryl':[],'ubiquitinyl':[]}
 	ys = {'acetyl':[],'S-phosphoryl':[],'T-phosphoryl':[],'Y-phosphoryl':[],'ubiquitinyl':[]}
 	min_obs = 5
+	#create x,y arrays for plot
 	for a in range(1,_plength+1):
 		if a not in _res or _res[a] < 10:
 			continue
@@ -127,21 +145,22 @@ def make_ptm_csv(_l,_plength,_title,_protein,_res,_file):
 				xs['ubiquitinyl'].append(a)
 				ys['ubiquitinyl'].append(values['ubiquitinyl'][b]/_res[a])
 
-#	plt.xkcd()
+
 	mpl.style.use('seaborn-notebook')
 	plt.xlim(0,int(1.02*_plength))
 	ms = 10
+	#load all x,y information into a plot
 	plt.plot(xs['acetyl'],ys['acetyl'],color=(0.25,0,1,.8),markersize=ms,marker='o',linestyle='None',label='acetyl')
 	plt.plot(xs['S-phosphoryl'],ys['S-phosphoryl'],markersize=ms,color=(1,0,.25,.8),marker='v',linestyle='None',label='S-phos')
 	plt.plot(xs['T-phosphoryl'],ys['T-phosphoryl'],markersize=ms,color=(1,0,.25,.8),marker='^',linestyle='None',label='T-phos')
 	plt.plot(xs['Y-phosphoryl'],ys['Y-phosphoryl'],markersize=ms,color=(1,0,.25,.8),marker='o',linestyle='None',label='Y-phos')
 	plt.plot(xs['ubiquitinyl'],ys['ubiquitinyl'],markersize=ms,color=(.1,.8,.1,.8),marker='v',linestyle='None',label='K-ubiq')
+	#set up the required graph
 	plt.yscale('log')
 	plt.ylabel('ptm/total observations')
 	plt.xlabel('residue')
 	plt.legend(loc='best')
 	plt.grid(True, lw = 1, ls = '--', c = '.8')
-#	plt.axvline(x=_plength,color=(.2,.2,.2,.5),linestyle='dotted',linewidth=1)
 	plt.title(_title)
 	ax = plt.gca()
 	box = ax.get_position()
@@ -151,10 +170,13 @@ def make_ptm_csv(_l,_plength,_title,_protein,_res,_file):
 	fig.set_size_inches(10, 5)
 	cl = re.sub('\|','_',_file)
 	plt.gca().get_xaxis().set_major_formatter(matplotlib.ticker.FuncFormatter(lambda x, p: format(int(x), ',')))
+	#store graph in png file
 	fig.savefig('png/%s_n_ptms.png' % (cl), dpi=100, bbox_inches='tight')
+	#display graph on screen
 	plt.show()
 	return 1
 
+#deal with command line arguments	
 if len(sys.argv) < 2:
 		print('ptm_normalized_png.py PROTEIN_ACC TITLE (FILENAME)')
 		exit()
