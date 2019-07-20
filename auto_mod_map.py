@@ -72,10 +72,14 @@ def render_map(_map,_title,_file):
 	for x in range(min_map,max_map):
 		ydiv += (ys[0][x]-ymean)**2
 	for a in range(-20,301):
-		xs[1].append(a)
+		if a == 0:
+			continue
 		ac = 0
 		for x in range(min_map,max_map-a):
 			ac += (ys[0][x]-ymean)*(ys[0][x+a]-ymean)
+		if ac < 0:
+			continue
+		xs[1].append(a)
 		ys[1].append(ac/ydiv)
 
 	mpl.style.use('seaborn-notebook')
@@ -84,7 +88,7 @@ def render_map(_map,_title,_file):
 	#alter plot parameters to create the desired view
 #	plt.yscale('log')
 #	plt.yscale('linear')
-	plt.ylabel('autocorrelation (δM)')
+	plt.ylabel('autocorrelation(δM)')
 	plt.xlabel('δM (Da)')
 	plt.grid(True, lw = 1, ls = '--', c = '.90')
 	plt.title(_title)
@@ -115,12 +119,12 @@ if not os.path.isfile(fpath):
 	print('Usage: >mod_map.py INPUT_FILE (TITLE)')
 	exit()
 #create default title
-title = 'autocorrelation %s' % fpath
+title = 'autocorrelation — %s' % fpath
 #try to get path from command line
 try:
 	title = sys.argv[2]
 except:
-	'autocorrelation %s' % fpath
+	'autocorrelation — %s' % fpath
 
 #create the xml parser
 parser = xml.sax.make_parser()

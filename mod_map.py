@@ -67,7 +67,7 @@ def render_map(_map,_title,_file):
 	#alter plot parameters to create the desire view
 	plt.yscale('log')
 #	plt.yscale('linear')
-	plt.ylabel('PSMs')
+	plt.ylabel('PSM(ΔM)')
 	plt.xlabel('ΔM (measured-sequence, Da)')
 	plt.grid(True, lw = 1, ls = '--', c = '.90')
 	plt.title(_title)
@@ -99,12 +99,12 @@ if not os.path.isfile(fpath):
 	print('Usage: >mod_map.py INPUT_FILE (TITLE)')
 	exit()
 #create default title
-title = fpath
+title = 'correlation — %s' % fpath
 #try to get path from command line
 try:
 	title = sys.argv[2]
 except:
-	title = fpath
+	title = 'correlation — %s' % fpath
 
 #create the xml parser
 parser = xml.sax.make_parser()
