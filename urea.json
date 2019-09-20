@@ -1,0 +1,12 @@
+{
+"headings": {
+		"Mitochondrial": ["CPS1","OTC"],
+		"Cytosolic":["ASS1","ASL","ARG1"]},
+"heading_colors": {"Mitochondrial": "#ff9900","Cytosolic": "#0099ff"},
+"accessions": { "CPS1":"ENSP00000233072","OTC":"ENSP00000039007","ASS1":"ENSP00000361469",
+		"ASL":"ENSP00000378741","ARG1":"ENSP00000349446"},
+"title": "M-A diagrams for urea cycle proteins (H. sapiens)",
+"directory": "ureax",
+"description": "<b>The urea cycle: Teaching intermediary metabolism in a physiological setting</b> <a href='https://iubmb.onlinelibrary.wiley.com/doi/full/10.1002/bmb.2003.494031050249' target='_blank'>Biochemistry and Molecular Biology Education, doi: 10.1002/bmb.2003.494031050249</a>",
+"image" : "/ma-diagrams/ureax/urea_cycle.png"
+}			
