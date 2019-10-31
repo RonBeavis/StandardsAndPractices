@@ -26,7 +26,6 @@ def scramble(_s):
 		if a == 'K' or a == 'R':
 			pep = p+a
 			if pep in redundant:
-				print(redundant[pep])
 				n += redundant[pep]
 			else:
 				r = s_p(pep)
