@@ -6,6 +6,8 @@
 from random import shuffle
 import sys
 
+redundant = {}
+
 # shuffles any peptide
 def s_p(_p):
 	if len(_p) == 0:
@@ -17,11 +19,19 @@ def s_p(_p):
 
 # shuffles a protein
 def scramble(_s):
+	global redundant
 	n = ''
 	p = ''
 	for i,a in enumerate(list(_s)):
 		if a == 'K' or a == 'R':
-			n += s_p(p + a)
+			pep = p+a
+			if pep in redundant:
+				print(redundant[pep])
+				n += redundant[pep]
+			else:
+				r = s_p(pep)
+				redundant[pep] = r
+				n += r
 			p = ''
 		else:
 			p += a
