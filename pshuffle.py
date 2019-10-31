@@ -15,7 +15,7 @@ def s_p(_p):
 	shuffle(l)
 	return ''.join(l)+kr
 
-# suffles a protein
+# shuffles a protein
 def scramble(_s):
 	n = ''
 	p = ''
@@ -42,8 +42,10 @@ for f in fasta:
 		if len(s) != 0:
 			o.write(l+' (shuffled)\n')
 			d = scramble(s)
-			o.write('\n'.join(d[i:i+50] for i in range(0, len(d), 50)))
-			o.write('\n')
+			v = '\n'.join(d[i:i+50] for i in range(0, len(d), 50))
+			if v[:-1] != '\n':
+				v += '\n'
+			o.write(v)
 		l = f
 		s = ''
 		continue
@@ -51,7 +53,9 @@ for f in fasta:
 if len(s) != 0:
 	o.write(l+'\n')
 	d = scramble(s)
-	o.write('\n'.join(d[i:i+50] for i in range(0, len(d), 50)))
-	o.write('\n')
+	v = '\n'.join(d[i:i+50] for i in range(0, len(d), 50))
+	if v[:-1] != '\n':
+		v += '\n'
+	o.write(v)
 o.close()
 
