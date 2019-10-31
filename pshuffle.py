@@ -1,6 +1,7 @@
 # a simple protein FASTA sequence shuffler
 # that preserves tryptic peptide amino acid
 # composition and location
+# version 1.0
 
 from random import shuffle
 import sys
@@ -52,4 +53,5 @@ if len(s) != 0:
 	d = scramble(s)
 	o.write('\n'.join(d[i:i+50] for i in range(0, len(d), 50)))
 	o.write('\n')
+o.close()
 
