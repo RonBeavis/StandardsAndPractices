@@ -16,15 +16,28 @@ client_args = {
   }
 }
 
+def is_image(_l):
+	if _l.find('.png') == len(_l)-4:
+		return True
+	if _l.find('.gif') == len(_l)-4:
+		return True
+	if _l.find('.jpg') == len(_l)-4:
+		return True
+	return False
+
 def generate_que(_ls):
 	q = []
 	v = {}
 	for l in _ls:
-		if os.path.isfile(l):
-			if 'photo' in v:
-				v['photo'].append(l)
+		if is_image(l):
+			if os.path.isfile(l):
+				if 'photo' in v:
+					v['photo'].append(l)
+				else:
+					v['photo'] = [l]
 			else:
-				v['photo'] = [l]
+				print('Error: file "%s" does not exist')
+				exit()
 		else:
 			if len(v) > 0:
 				q.append(v)
@@ -36,9 +49,9 @@ def generate_que(_ls):
 		
 twitter = Twython(consumer_key, consumer_secret, access_token, access_token_secret)
 
-lines = [l.strip() for l in open(sys.argv[1],'r') if len(l.strip()) > 0]
+lines = [l.strip() for l in open(sys.argv[1],'r',encoding='utf-8') if len(l.strip()) > 0]
 
-log = open('status.log','a')
+log = open('status.log','a',encoding='utf-8')
 print('Tweeting "%s"' % (sys.argv[1]))
 log.write('Tweeting "%s"\n' % (sys.argv[1]))
 
@@ -61,6 +74,7 @@ for q in que:
 		s = twitter.update_status(status=q['message'],media_ids=rs)
 	log.write('\t%s\n' % (s))
 	mn += 1
+	print('id = %s' % (s['id_str']))
 
 log.close()
 

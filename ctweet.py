@@ -16,15 +16,28 @@ client_args = {
   }
 }
 
+def is_image(_l):
+	if _l.find('.png') == len(_l)-4:
+		return True
+	if _l.find('.gif') == len(_l)-4:
+		return True
+	if _l.find('.jpg') == len(_l)-4:
+		return True
+	return False
+
 def generate_que(_ls):
 	q = []
 	v = {}
 	for l in _ls:
-		if os.path.isfile(l):
-			if 'photo' in v:
-				v['photo'].append(l)
+		if is_image(l):
+			if os.path.isfile(l):
+				if 'photo' in v:
+					v['photo'].append(l)
+				else:
+					v['photo'] = [l]
 			else:
-				v['photo'] = [l]
+				print('Error: file "%s" does not exist')
+				exit()
 		else:
 			if len(v) > 0:
 				q.append(v)
@@ -50,5 +63,5 @@ for q in que:
 		s = twitter.update_status(status=q['message'],media_ids=rs,in_reply_to_status_id=s['id_str'])
 	else:
 		s = twitter.update_status(status=q['message'],media_ids=rs)
-
+	print('id = %s' % (s['id_str']))
 
