@@ -36,7 +36,7 @@ def generate_que(_ls):
 				else:
 					v['photo'] = [l]
 			else:
-				print('Error: file "%s" does not exist')
+				print('Error: file "%s" does not exist' % (l))
 				exit()
 		else:
 			if len(v) > 0:
