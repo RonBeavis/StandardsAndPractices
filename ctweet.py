@@ -12,7 +12,8 @@ from auth import (
 
 client_args = {
   "headers": {
-    "accept-charset": "utf-8"
+    "accept-charset": "utf-8",
+    "User-Agent": "GPM Messages"
   }
 }
 
@@ -47,10 +48,22 @@ def generate_que(_ls):
 		q.append(v)
 	return q
 		
-twitter = Twython(consumer_key, consumer_secret, access_token, access_token_secret)
+twitter = Twython(consumer_key, consumer_secret, access_token, access_token_secret,client_args=client_args)
+ls = sys.argv[1:]
+reply = 0
+try:
+	reply = int(ls[0])
+	if reply > 10000:
+		ls = ls[1:]
+except:
+	pass
 
-que = generate_que(sys.argv[1:])
+que = generate_que(ls)
 s = {}
+
+if reply > 10000:
+	s['id_str'] = str(reply)
+
 for q in que:
 	rs = []
 	if 'photo' in q:

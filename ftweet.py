@@ -12,7 +12,8 @@ from auth import (
 
 client_args = {
   "headers": {
-    "accept-charset": "utf-8"
+    "accept-charset": "utf-8",
+    "User-Agent": "GPM Messages"
   }
 }
 
@@ -29,6 +30,9 @@ def generate_que(_ls):
 	q = []
 	v = {}
 	for l in _ls:
+		if l[0] == '#':
+			print(l)
+			continue
 		if is_image(l):
 			if os.path.isfile(l):
 				if 'photo' in v:
@@ -46,10 +50,18 @@ def generate_que(_ls):
 	if len(v) > 0:
 		q.append(v)
 	return q
-		
-twitter = Twython(consumer_key, consumer_secret, access_token, access_token_secret)
+
+twitter = Twython(consumer_key, consumer_secret, access_token, access_token_secret,client_args=client_args)
 
 lines = [l.strip() for l in open(sys.argv[1],'r',encoding='utf-8') if len(l.strip()) > 0]
+
+reply = 0
+try:
+	reply = int(lines[0])
+	if reply > 10000:
+		lines = lines[1:]
+except:
+	pass
 
 log = open('status.log','a',encoding='utf-8')
 print('Tweeting "%s"' % (sys.argv[1]))
@@ -57,6 +69,8 @@ log.write('Tweeting "%s"\n' % (sys.argv[1]))
 
 que = generate_que(lines)
 s = {}
+if reply > 10000:
+	s['id_str'] = str(reply)
 mn = 1
 for q in que:
 	rs = []
