@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<HTML>
+<HEAD>
+<META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf8" />
+<meta http-equiv="x-ua-compatible" content="ie=edge">
+<meta http-equiv="Cache-control: no-cache" content="public">
+<meta http-equiv="Pragma: no-cache" content="public">
+<meta name="keywords" content="Beavis Informatics Ltd." />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+<title>Winnipeg Transit Stop Schedules</title>
+<link rel="shortcut icon" href="/p/scb_16.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/p/scb_180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/p/scb_32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/p/scb_16.png">
+<link rel="stylesheet" href="/css/scb.css">
+
+<style media="screen" type="text/css">
+div.ex4 {
+	font-weight: normal;
+	font-family:  "Roboto",Helvetica, Arial, sans-serif;
+  max-width: 600px;
+  margin: 10px 20px 3px 3px;
+  background-color: #FFFFFF;
+  padding: 6pt 6pt 6pt 6pt;
+}
+div.btn1 {
+	font-weight: normal;
+	font-family:  "Roboto",Helvetica, Arial, sans-serif;
+  max-width: 500px;
+  display: flex
+}
+
+div.ex3 {
+	font-weight: normal;
+	font-family:  "Roboto",Helvetica, Arial, sans-serif;
+  max-width: 500px;
+  font-style: italic;
+  margin: 10px 10px 3px 3px;
+  background-color: #DDDDDD;
+}
+
+textarea.ex1 {
+	font-weight: normal;
+	font-family:  "Roboto",Helvetica, Arial, sans-serif;
+	font-size: 12pt;
+    margin: 10px 20px 3px 3px;
+}
+.button {
+	font-weight: normal;
+	font-family:  "Roboto",Helvetica, Arial, sans-serif;
+  position: relative;
+  background-color: #4CAF50;
+  border: none;
+  font-size: 14px;
+  color: #FFFFFF;
+  padding: 3px;
+  width: 60px;
+  text-align: center;
+  -webkit-transition-duration: 0.4s; /* Safari */
+  transition-duration: 0.4s;
+  text-decoration: none;
+  overflow: hidden;
+  cursor: pointer;
+  margin-bottom: 8px;
+  margin-top: 8px;
+
+}
+
+.button:after {
+	font-weight: normal;
+	font-family:  "Roboto",Helvetica, Arial, sans-serif;
+  content: "";
+  background: #f1f1f1;
+  display: block;
+  position: absolute;
+  padding-top: 300%;
+  padding-left: 350%;
+  margin-left: -20px !important;
+  margin-top: -120%;
+  opacity: 0;
+  transition: all 0.8s;
+}
+
+.button:active:after {
+	font-weight: normal;
+	font-family:  "Roboto",Helvetica, Arial, sans-serif;
+  padding: 0;
+  margin: 0;
+  opacity: 1;
+  transition: 0s
+}
+a {
+	font-weight: normal;
+	font-family:  "Roboto",Helvetica, Arial, sans-serif;
+  color: blue;
+  text-decoration: none;
+}
+a:hover {
+	font-weight: normal;
+	font-family:  "Roboto",Helvetica, Arial, sans-serif;
+  color: blue;
+  text-decoration: underline;
+}
+</style>
+<script type="text/javascript">
+var api_key = "YOUR KEY HERE"
+function getSchedule(sid)	{
+	var cText = document.getElementById(sid).value;
+	var url = "https://api.winnipegtransit.com/v3/stops/" + cText + "/schedule.json?api-key=" + api_key;
+	fetch(url,{method: 'get'})
+	.then((resp) => resp.json())
+	.then(function(data) {
+		var i = 0;
+		var html = data['stop-schedule']['stop']['key'] + " &mdash; " + data['stop-schedule']['stop']['name'];
+		html += "<ol>\n";
+		while(i < data['stop-schedule']['route-schedules'].length)	{
+			html += "<li>" + data['stop-schedule']['route-schedules'][i]['route']['name'] + "</li>\n";
+			j = 0;
+			html += "<ol>"
+			while(j < data['stop-schedule']['route-schedules'][i]['scheduled-stops'].length)	{
+				if(data['stop-schedule']['route-schedules'][i]['scheduled-stops'][j]['times']['departure'])	{
+					d = new Date(data['stop-schedule']['route-schedules'][i]['scheduled-stops'][j]['times']['departure']['estimated']);
+					html+= "<li>" + ("00" + d.getHours()).slice(-2) + ":" + ("00" + d.getMinutes()).slice(-2) + "</li>\n";
+				}
+				j++;
+			}
+			html += "</ol></li>\n";
+			i++;
+		}
+		html += "</ol>\n";
+		document.getElementById("results").innerHTML = html})
+	.catch(function(err) {
+		console.log('Fetch Error :-S', err);
+	})
+}
+
+</script>
+</HEAD>
+<BODY onLoad="document.getElementById('v').focus();getSchedule('v');">
+<input id="v" class="ex1" placeholder="stop number" value="10666" size="20"/>
+<button id="vb" class="button" onClick="getSchedule('v');">Go</button> <br />
+<select id='vs' class="ex1" name="stop_list" onChange="document.getElementById('v').value = this.value;getSchedule('v');">
+<option value="10635">S. Main × City Hall</option>
+<option value="10720">W. William × City Hall</option>
+<option value="10741">E. William × HSC</option>
+<option value="10439">N. Sherbrook × Notre Dame</option>
+<option value="10629">N. Main × Centennial Concert Hall</option>
+<option value="10541">W. Portage × Garry</option>
+<option value="10651">N. Smith × Broadway</option>
+<option SELECTED value="10666">S. Princess × McDermot</option>
+<option value="60292">E. Grant × Grant Park Mall</option>
+<option value="10570">E. Portage × Sherburn</option>
+<option value="10638">S. Main × Pioneer</option>
+<option value="50262">N. St. Mary's × Marion</option>
+<option value="50206">W. Goulet × St. Mary's</option>
+</select>
+<script type="text/javascript">
+document.getElementById('v')
+    .addEventListener('keyup', function(event) {
+    event.preventDefault();
+    if (event.keyCode === 13) {
+        document.getElementById('vb').click();
+    }
+});
+</script>
+<div id="results" class="ex4"></div>
+<img src="/p/scb_logo.png" border="0" />
+
+</BODY>
+</HTML>
+

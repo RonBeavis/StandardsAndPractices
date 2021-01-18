@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta charset="utf-8">
+<title>SomeCrazyBlogger</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<link rel="shortcut icon" href="/p/scb_16.ico">
+<link rel="apple-touch-icon" sizes="180x180" href="/p/scb_180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/p/scb_32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="/p/scb_16.png">
+<link rel="stylesheet" href="/css/scb.css">
+
+<style>
+	body {
+		font-size: 18pt;
+		margin: 10px 10px 10px 10px;
+		text-align:left;	
+	}
+	.in {
+		font-weight: normal;
+		font-family:  "Roboto Sans", Helvetica, Arial, sans-serif;
+		font-size: 18pt;
+	}
+	a {
+		color: #00f;
+		text-decoration: none;
+	}
+	div {
+		display: block;
+		margin: auto;
+		width: 70%;
+		padding: 10px;
+		font-style: italic;
+	}
+</style>
+</head>
+<body>
+<div>time: <input class="in" id="time" value="5*60" size="5" style="text-align: right;"/> 
+<input class="in" id="start" type="button" value="start" onClick="" /> 
+<input class="in" id="stop" type="button" value="stop" onClick="document.getElementById('time').value = timer_setting;location.reload();" /> 
+<input class="in" type="button" onClick="snd.play();" value="test"/></div>
+<script>
+var snd = new Audio('beep-04.wav')
+
+var counter = {};
+var timer_setting = document.getElementById("time").value;
+
+function handleEvent()	{
+  // COUNTDOWN IN SECONDS
+  // EXAMPLE - 5 MINS = 5 X 60 = 300 SECS
+	counter.end = eval(document.getElementById("time").value);
+	timer_setting = document.getElementById("time").value;
+  // Get the containers
+  counter.sec = document.getElementById("time");
+
+  // Start if not past end date 
+  if (counter.end > 0) {
+    counter.ticker = setInterval(function(){
+      // Stop if passed end time
+      counter.end--;
+      if (counter.remain <= 0) { clearInterval(counter.ticker); }
+
+      // Calculate remaining time
+      var secs = counter.end;
+	  if(secs == 0)	{
+        counter.sec.value = secs;
+		counter.end = 0;
+		clearInterval(counter.ticker);
+		snd.play();
+		snd.play();
+		this.removeEventListener("click", handleEvent);
+	  }
+      // Update HTML
+      counter.sec.value = secs;
+    }, 1000);
+  }
+}
+
+function changeEvent()	{
+	
+}
+
+document.getElementById("start").addEventListener("click", handleEvent); 
+document.getElementById("time").addEventListener("change", changeEvent);
+</script>
+<img src="/p/scb_logo.png" border="0" />
+
+</body>
+</html>
