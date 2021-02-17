@@ -63,7 +63,7 @@ def get_list(_l):
 
 #deal with command line arguments	
 if len(sys.argv) < 2:
-		print('ptm_png.py FILENAME')
+		print('gpmdb_ptm_bot.py FILENAME')
 		exit()
 #file contains a list of accession numbers
 filename = sys.argv[1]
