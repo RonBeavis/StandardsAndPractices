@@ -1,20 +1,17 @@
 #
-# Copyright © 2019 Ronald C. Beavis
+# Copyright © 2021 Ronald C. Beavis
 # Licensed under Apache License, Version 2.0, January 2004
 #
 
-# Creates a histogram of the frequency of PTM observation
-# Information is obtained from GPMDB services and converted into a
-# scatter plot
+# Takes a list of protein accession numbers in a file and generates
+# a list of lysine residues that have been observed with ubiquitination
+# and the number of times the ubiquitination has been observed.
 
 import sys
 import requests
 import re
 import json
 import os
-import matplotlib.pyplot as plt
-import matplotlib.style
-import matplotlib as mpl
 
 #obtain the protein sequence for the protein identified by _l
 def get_protein(_l):
