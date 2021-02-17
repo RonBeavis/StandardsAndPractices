@@ -28,7 +28,7 @@ def get_protein(_l):
 		return None
 	return values[0]
 
-# generate a frequency histogram and plot the values
+# generate a frequency histogram and returns the values
 def get_list(_l):
 	#get the protein sequence to sanity check the results
 	seq = list(get_protein(_l))
