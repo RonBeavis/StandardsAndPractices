@@ -55,13 +55,12 @@ def trypsin(_seq):
 					peps.append({'seq':'%s' % (seq),'f':f,'l':ps[i]+1})
 			# residue to add on to the N-terminus of the next peptide
 			remainder = _seq[ps[i]]
-		i += 1
-	if ps[-1] == lseq-1 and len(ps) > 4:
-		print(ps[-1]+1,lseq,ps[-2]-ps[-1])
-		if ps[-1]-ps[-2] == 1 and ps[-2]-ps[-3] > 1 and ps[-3]-ps[-4] == 1:
-			seq = _seq[ps[-3]] + peps[-1]['seq']
-			peps.append({'seq':'%s' % (seq),'f':ps[-3]+1,'l':lseq})
+		if i > 3:
+			if ps[i]-ps[i-1] == 1 and ps[i-1]-ps[i-2] > 1 and ps[i-2]-ps[i-3] == 1:
+				seq = _seq[ps[i-2]] + peps[-1]['seq']
+				peps.append({'seq':'%s' % (seq),'f':ps[i-2]+1,'l':lseq})
 			
+		i += 1
 	# remove any peptides formed by the removal of the first or last residue in a protein
 	peps = [p for p in peps if p['l'] != lseq-1 and p['f'] != 2]
 	peps = [p for p in sorted(peps, key=lambda k: k['f'])]
