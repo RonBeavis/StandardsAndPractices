@@ -15,6 +15,8 @@ def trypsin(_seq):
 	lseq = len(_seq)
 	seqs = list(_seq)
 	peps = []
+	i = 0
+	j = 0
 	# iterate through the sequence
 	for i,res in enumerate(seqs):
 		if i == lseq - 1:
@@ -38,15 +40,15 @@ def trypsin(_seq):
 			# deal with the last residue cleavage problem
 			if j < lseq-1 and seqs[j] in ss and seqs[i+1] not in cbad:
 				peps.append({'seq':'%s' % (_seq[i:j+1]),'f':i+1,'l':j+1})
-			elif j == lseq - 1:
-				peps.append({'seq':'%s' % (_seq[i:j+1]),'f':i+1,'l':j+1})
+			elif j >= lseq - 1:
+				peps.append({'seq':'%s' % (_seq[i:j+1]),'f':i+1,'l':lseq})
 		else:
 			pass
 	# make sure everything is in order
 	peps = [p for p in sorted(peps, key=lambda k: k['f'])]
 	return peps
 
-proseq = '''MRRGLSKRRLLSARRLALAKAWPTVLQTGTRPGFHFTVDRR'''
+proseq = '''MTLIEGVGDEVTVLFSVLACLLVLALAWVSTHTAEGGDPLPQPSGTPTPSQPSAAMAATDSMRGEAPGAETPSLRHRGQAAQPEPSTGFTATPPAPDSPQEPLVLRLKFLNDSEQVARAWPHDTIGSLKRTQFPGREQQVRLIYQGQLLGDDTQTLGSLHLPPNCVLHCHVSTRVGPPNPPCPPGSEPGPSGLEIGSLLLPLLLLLLLLLWYCQIQYRPFFPLTATLGLAGFTLLLSLLAFAMYRP'''
 try:
 	proseq = sys.argv[1]
 except:
